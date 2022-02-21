@@ -1,13 +1,9 @@
 import React from 'react';
 
-import Launch from './src/screens/Launch';
-
+import VoiceTest from './src/screens/VoiceTest';
 
 const App = () => {
-  return (
-    <Launch></Launch>
-  );
+  return <VoiceTest></VoiceTest>;
 };
-
 
 export default App;

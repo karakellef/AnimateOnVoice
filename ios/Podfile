@@ -12,6 +12,8 @@ target 'AnimateOnVoice' do
     :hermes_enabled => false
   )
 
+  pod 'react-native-voice', :path => '../node_modules/@react-native-voice/voice'
+
   target 'AnimateOnVoiceTests' do
     inherit! :complete
     # Pods for testing
