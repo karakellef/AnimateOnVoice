@@ -8,6 +8,7 @@ const animationsrc = require('../assets/animation1.json');
 
 export default class VoiceTest extends Component {
   state = {
+    active: false,
     recognized: '',
     pitch: '',
     error: '',
@@ -28,7 +29,6 @@ export default class VoiceTest extends Component {
     Voice.onSpeechVolumeChanged = this.onSpeechVolumeChanged;
     this.animation = createRef();
   }
-  componentDidUpdate() {}
 
   componentWillUnmount() {
     Voice.destroy().then(Voice.removeAllListeners);
@@ -80,9 +80,23 @@ export default class VoiceTest extends Component {
   onSpeechVolumeChanged = e => {
     console.log('onSpeechVolumeChanged: ', e);
     if (e.value > 1.8) {
-      this.animation.current.resume();
+      if (this.state.active) {
+        null;
+      } else {
+        this.animation.current.resume();
+        this.setState({
+          active: true,
+        });
+      }
     } else {
-      this.animation.current.pause();
+      if (this.state.active) {
+        this.animation.current.pause();
+        this.setState({
+          active: false,
+        });
+      } else {
+        null;
+      }
     }
     this.setState({
       pitch: e.value,
@@ -107,25 +121,26 @@ export default class VoiceTest extends Component {
     }
   };
 
-  _stopRecognizing = async () => {
-    try {
-      await Voice.stop();
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  // _stopRecognizing = async () => {
+  //   try {
+  //     await Voice.stop();
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
 
-  _cancelRecognizing = async () => {
-    try {
-      await Voice.cancel();
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  // _cancelRecognizing = async () => {
+  //   try {
+  //     await Voice.cancel();
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
 
   _destroyRecognizer = async () => {
     try {
       await Voice.destroy();
+      this.animation.current.pause();
     } catch (e) {
       console.error(e);
     }
@@ -145,8 +160,14 @@ export default class VoiceTest extends Component {
       <SafeAreaView style={styles.body}>
         <View style={styles.buttons}>
           <Button onPress={() => this._startRecognizing()} title="Start Call" />
-          <Button onPress={() => this._destroyRecognizer()} title="Stop Call" />
-          <Text>{this.state.pitch}</Text>
+          <Button
+            onPress={() => {
+              this._destroyRecognizer();
+            }}
+            title="Stop Call"
+          />
+          <Text>Animation active above: 1.8</Text>
+          <Text>Pitch: {this.state.pitch}</Text>
         </View>
         <View style={styles.icon}>
           <LottieView
